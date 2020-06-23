@@ -681,11 +681,14 @@ LINPHONE_PUBLIC const char *linphone_factory_get_data_dir(LinphoneFactory *facto
 LINPHONE_PUBLIC const char *linphone_factory_get_download_dir(LinphoneFactory *factory, void *context);
 
 #define LINPHONE_VFS_ENCRYPTION_PLAIN 0xFFFF
+#define LINPHONE_VFS_ENCRYPTION_UNSET 0x0000
 #define LINPHONE_VFS_ENCRYPTION_DUMMY 0x0001
+#define LINPHONE_VFS_ENCRYPTION_AES256GCM128_SHA256 0x0002
 /**
  * Select encryption module and set secret material to encrypt the files
  * @param[in]	factory			the #LinphoneFactory
  * @param[in]	encryptionModule	One of the available encryption module for VFS, pick in the LINPHONE_VFS_ENCRYPTION_* list
+ * 					if set to _UNSET, default bctoolbox VFS is switch to Standard one
  * @param[in]	secret			the secret material used to encrypt the files
  * @param[in]	secretSize		size of the secret
  */
