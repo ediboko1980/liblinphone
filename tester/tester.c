@@ -1705,7 +1705,12 @@ void file_transfer_received(LinphoneChatMessage *msg, LinphoneContent* content, 
 	BC_ASSERT_PTR_NULL(linphone_chat_message_get_file_transfer_filepath(msg));
 	BC_ASSERT_EQUAL(linphone_chat_message_get_state(msg), LinphoneChatMessageStateFileTransferInProgress, int, "%d");
 
-	receive_file = bc_tester_file("receive_file.dump");
+	char receive_file_name[255];
+	char random_part[10];
+	belle_sip_random_token(random_part, sizeof(random_part)-1);
+	snprintf(receive_file_name,sizeof(receive_file_name),"receive_file-%s.dump",random_part);
+	receive_file = bc_tester_file(receive_file_name);
+	
 	if (!linphone_content_get_user_data(content)) {
 		/*first chunk, creating file*/
 		file = fopen(receive_file,"wb");
@@ -1721,11 +1726,13 @@ void file_transfer_received(LinphoneChatMessage *msg, LinphoneContent* content, 
 		fclose(file);
 		BC_ASSERT_TRUE(stat(receive_file, &st)==0);
 		BC_ASSERT_EQUAL((int)linphone_content_get_file_size(content), (int)st.st_size, int, "%i");
+		linphone_chat_message_set_file_transfer_filepath(msg,receive_file);
 	} else { /* store content on a file*/
 		if (fwrite(linphone_buffer_get_content(buffer),linphone_buffer_get_size(buffer),1,file)==0){
 			ms_error("file_transfer_received(): write() failed: %s",strerror(errno));
 		}
 	}
+	
 	bc_free(receive_file);
 }
 
